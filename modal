@@ -1,0 +1,113 @@
+sudo apt update
+sudo apt -y install software-properties-common ca-certificates lsb-release \
+apt-transport-https unzip mariadb-server
+
+=====================
+apt -y install apache2
+
+=====================
+sudo su
+apt -y install php-common php-mysql php-xml php-xmlrpc \
+php-curl php-gd php-imagick php-cli php-dev \
+php-imap php-mbstring php-opcache php-soap \
+php-zip php-intl php-cli \
+imagemagick git zip libgd-dev libapache2-mod-php \
+php php-common libapache2-mod-php php-cli
+
+=====================
+sudo vi /etc/php/8.3/apache2/php.ini
+
+SETUP INTO
+upload_max_filesize = 100M
+post_max_size = 48M
+memory_limit = 512M
+max_input_time = 1000
+max_input_vars = 5000
+max_execution_time = 600
+
+SIMPAN
+
+sudo update-alternatives --config php
+
+There is 1 choice for the alternative php (providing /usr/bin/php).
+
+  Selection    Path             Priority   Status
+------------------------------------------------------------
+* 0            /usr/bin/php8.3   83        auto mode
+  1            /usr/bin/php8.3   83        manual mode
+
+Press <enter> to keep the current choice[*], or type selection number: 
+
+There is only one alternative in link group php (providing /usr/bin/php): /usr/bin/php8.3
+Nothing to configure.
+
+sudo systemctl restart apache2.service
+sudo systemctl enable apache2.service
+
+sudo apt -y install mariadb-server
+
+sudo systemctl start mariadb
+sudo systemctl enable mariadb
+
+SETUP DATABASE
+mysql
+mysql> SET PASSWORD FOR root@localhost=PASSWORD('password');
+
+# mysql -u root -p
+Enter password:
+create database moodle;
+ALTER DATABASE moodle charset=utf8mb4;
+ALTER DATABASE moodle CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
+grant INSERT,SELECT on moodle.* to root@localhost;
+grant CREATE, INSERT, SELECT, DELETE, UPDATE on moodle.* to usermoodle@localhost identified by "moodlepassword";
+grant CREATE, INSERT, SELECT, DELETE, UPDATE on moodle.* to usermoodle identified by "moodlepassword";
+exit
+
+PASSWORD AREA
+# mysql -u root -p123456
+
+create database moodle;
+ALTER DATABASE moodle charset=utf8mb4;
+ALTER DATABASE moodle CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
+grant ALL on moodle.* to root@localhost;
+grant ALL on moodle.* to moodle@localhost identified by "moodle";
+grant ALL on moodle.* to moodle identified by "moodle";
+exit
+
+COMMANDER :
+
+service mysqld start
+service mysqld restart
+
+systemctl restart mysqld
+systemctl enable mysqld
+
+https://download.moodle.org/download.php/langpack/4.0/id.zip
+
+/usr/local/src
+
+cd /usr/local/src
+mkdir -p /var/moodledata/lang
+cp id.zip /var/moodledata/lang
+cd /var/moodledata/lang
+unzip id.zip
+chmod -Rf 777 /var/moodledata/lang/
+chown -Rf www-data: /var/moodledata/lang/
+
+https://download.moodle.org/download.php/stable404/moodle-latest-404.tgz
+
+/usr/local/src
+
+cd /usr/local/src
+cp moodle-latest-404.tgz /var/www/html/
+cd /var/www/html/
+tar zxvf moodle-latest-404.tgz
+chown -Rf www-data: /var/moodledata/
+chmod -Rf 777 /var/www/html/moodle	
+chown -Rf www-data: /var/www/html/moodle
+
+
+
+
+
+
